@@ -1,0 +1,62 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master-etcd-snapshot
+  name: master-etcd-snapshot
+spec:
+  config:
+    ignition:
+      version: 2.2.0
+    networkd: {}
+    passwd: {}
+    systemd:
+      units:
+        - dropins:
+            - contents: |
+                [Unit]
+                Description=Scheduled snapshot of etcd datastore & k8s resources
+                [Service]
+                Type=oneshot
+                Environment=TGT=/tmp/ocp-snapshots
+                Environment=DAYS=7
+                ExecStart=/bin/bash /usr/local/bin/cluster-backup.sh ${TGT}
+                ExecStart=find ${TGT} -name static*.tar.gz -mtime +${DAYS} -type f -delete || echo
+                ExecStart=find ${TGT} -name snapshot*.db   -mtime +${DAYS} -type f -delete || echo
+              name: 99-etcd-snapshot.conf
+          name: etcd-snapshot.service
+        - dropins:
+            - contents: |
+                [Unit]
+                Description=Run etcd-snapshot.service daily
+                [Timer]
+                OnCalendar=00:01:00 America/New_York
+              name: 99-etcd-snapshot.conf
+          name: etcd-snapshot.timer
+...
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    # machineconfiguration.openshift.io/mco-built-in: ''
+    # operator.machineconfiguration.openshift.io/required-for-upgrade: ''
+    pools.operator.machineconfiguration.openshift.io/master: ''
+  name: master-etcd-snapshot-pool
+spec:
+  configuration:
+    name: master-etcd-snapshot
+    source:
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: master-etcd-snapshot
+  machineConfigSelector:
+    matchLabels:
+      machineconfiguration.openshift.io/role: master-etcd-snapshot
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/etcd-snapshot: ''
+      #kubernetes.io/hostname: master-0.ocpk.0.taranto.dev
+  paused: false
+...

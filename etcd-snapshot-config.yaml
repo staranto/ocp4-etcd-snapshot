@@ -1,0 +1,57 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master-etcd-snapshot
+  name: master-etcd-snapshot
+spec:
+  config:
+    ignition:
+      config: {}
+      security:
+        tls: {}
+      timeouts: {}
+      version: 3.1.0
+    networkd: {}
+    passwd: {}
+    storage:
+      files:
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,W1VuaXRdCkRlc2NyaXB0aW9uPVNjaGVkdWxlZCBzbmFwc2hvdCBvZiBldGNkIGRhdGFzdG9yZSAmIGs4cyByZXNvdXJjZXMKCltTZXJ2aWNlXQpUeXBlPW9uZXNob3QKI1VzZXI9Y29yZQojR3JvdXA9Y29yZQpFbnZpcm9ubWVudD1UR1Q9L3RtcC9vY3Atc25hcHNob3RzCkVudmlyb25tZW50PURBWVM9NwpFeGVjU3RhcnQ9L2Jpbi9iYXNoIC91c3IvbG9jYWwvYmluL2NsdXN0ZXItYmFja3VwLnNoICR7VEdUfQpFeGVjU3RhcnQ9ZmluZCAke1RHVH0gLW5hbWUgc3RhdGljKi50YXIuZ3ogLW10aW1lICske0RBWVN9IC10eXBlIGYgLWRlbGV0ZSB8fCBlY2hvCkV4ZWNTdGFydD1maW5kICR7VEdUfSAtbmFtZSBzbmFwc2hvdCouZGIgICAgIC1tdGltZSArJHtEQVlTfSAtdHlwZSBmIC1kZWxldGUgfHwgZWNobwo=
+        mode: 420
+        overwrite: true
+        path: /etc/systemd/system/etcd-snapshot.service
+      - contents:
+          source: data:text/plain;charset=utf-8;base64,W1VuaXRdCkRlc2NyaXB0aW9uPVJ1biBldGNkLXNuYXBzaG90LnNlcnZpY2UgZGFpbHkKCltUaW1lcl0KT25DYWxlbmRhcj0wMDowMTowMCBBbWVyaWNhL05ld19Zb3JrCg==
+        mode: 420
+        overwrite: true
+        path: /etc/systemd/system/etcd-snapshot.timer
+  osImageURL: ""
+...
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    # machineconfiguration.openshift.io/mco-built-in: ''
+    # operator.machineconfiguration.openshift.io/required-for-upgrade: ''
+    pools.operator.machineconfiguration.openshift.io/master: ''
+  name: master-etcd-snapshot-pool
+spec:
+  configuration:
+    name: master-etcd-snapshot
+    source:
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: master-etcd-snapshot
+  machineConfigSelector:
+    matchLabels:
+      machineconfiguration.openshift.io/role: master-etcd-snapshot
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/master: ''
+      node-role.kubernetes.io/etcd-snapshot: ''
+      #kubernetes.io/hostname: master-0.ocpk.0.taranto.dev
+  paused: false
+...
