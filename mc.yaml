@@ -36,20 +36,3 @@ spec:
           name: etcd-snapshot.timer
           enabled: true
 ...
----
-apiVersion: machineconfiguration.openshift.io/v1
-kind: MachineConfigPool
-metadata:
-  labels:
-    machineconfiguration.openshift.io/mco-built-in: ''
-    operator.machineconfiguration.openshift.io/required-for-upgrade: ''
-  name: master-etcd-snapshot-pool
-spec:
-  machineConfigSelector:
-    matchLabels:
-      machineconfiguration.openshift.io/role: etcd-snapshot
-  nodeSelector:
-    matchLabels:
-      taranto.dev/etcd-snapshot: ''
-  paused: false
-...

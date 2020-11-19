@@ -3,8 +3,8 @@ apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 metadata:
   labels:
-    machineconfiguration.openshift.io/role: etcd-snapshot
-  name: master-etcd-snapshot
+    machineconfiguration.openshift.io/role: master
+  name: 000-all-master-etcd-snapshot
 spec:
   config:
     ignition:
@@ -18,7 +18,7 @@ spec:
             [Service]
             Type=oneshot
             Environment=TGT=/tmp/ocp-snapshots
-            Environment=DAYS=8
+            Environment=DAYS=7
             ExecStart=/bin/bash /usr/local/bin/cluster-backup.sh ${TGT}
             ExecStart=-find ${TGT} -name "static*.tar.gz" -mtime +${DAYS} -type f -delete
             ExecStart=-find ${TGT} -name "snapshot*.db"   -mtime +${DAYS} -type f -delete
@@ -35,21 +35,4 @@ spec:
             OnCalendar=00:01:00 America/New_York
           name: etcd-snapshot.timer
           enabled: true
-...
----
-apiVersion: machineconfiguration.openshift.io/v1
-kind: MachineConfigPool
-metadata:
-  labels:
-    machineconfiguration.openshift.io/mco-built-in: ''
-    operator.machineconfiguration.openshift.io/required-for-upgrade: ''
-  name: master-etcd-snapshot-pool
-spec:
-  machineConfigSelector:
-    matchLabels:
-      machineconfiguration.openshift.io/role: etcd-snapshot
-  nodeSelector:
-    matchLabels:
-      taranto.dev/etcd-snapshot: ''
-  paused: false
 ...
