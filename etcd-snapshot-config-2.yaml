@@ -3,7 +3,7 @@ apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 metadata:
   labels:
-    machineconfiguration.openshift.io/role: master-etcd-snapshot
+    machineconfiguration.openshift.io/role: master
   name: master-etcd-snapshot
 spec:
   config:
@@ -40,9 +40,9 @@ apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfigPool
 metadata:
   labels:
-    # machineconfiguration.openshift.io/mco-built-in: ''
+    machineconfiguration.openshift.io/mco-built-in: ''
     # operator.machineconfiguration.openshift.io/required-for-upgrade: ''
-    pools.operator.machineconfiguration.openshift.io/master: ''
+    # pools.operator.machineconfiguration.openshift.io/master: ''
   name: master-etcd-snapshot-pool
 spec:
   configuration:
@@ -53,10 +53,9 @@ spec:
         name: master-etcd-snapshot
   machineConfigSelector:
     matchLabels:
-      machineconfiguration.openshift.io/role: master-etcd-snapshot
+      machineconfiguration.openshift.io/role: master
   nodeSelector:
     matchLabels:
       node-role.kubernetes.io/etcd-snapshot: ''
-      #kubernetes.io/hostname: master-0.ocpk.0.taranto.dev
   paused: false
 ...
