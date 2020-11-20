@@ -1,0 +1,38 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 000-all-master-etcd-snapshot
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+        - contents: |
+            [Unit]
+            Description=Scheduled snapshot of etcd datastore & k8s resources
+            
+            [Service]
+            Type=oneshot
+            Environment=TGT=/tmp/ocp-snapshots
+            Environment=DAYS=7
+            ExecStart=/bin/bash /usr/local/bin/cluster-backup.sh ${TGT}
+            ExecStart=-find ${TGT} -name "static*.tar.gz" -mtime +${DAYS} -type f -delete
+            ExecStart=-find ${TGT} -name "snapshot*.db"   -mtime +${DAYS} -type f -delete
+            
+            [Install]
+            WantedBy=multi-user.target
+          name: etcd-snapshot.service
+          enabled: true
+        - contents: |
+            [Unit]
+            Description=Run etcd-snapshot.service daily
+            
+            [Timer]
+            OnCalendar=00:01:00 America/New_York
+          name: etcd-snapshot.timer
+          enabled: true
+...

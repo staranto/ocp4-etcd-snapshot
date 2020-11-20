@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: etcd-snapshot-archiver
+  spec:
+spec:
+  containers:
+  - name: etcd-snapshot-archiver 
+    image: staranto/etcd-snapshot-archiver:0.1.0
+    imagePullPolicy: Always
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: "/tmp/etcd-snapshots"
+      name: hostpath-snapshot
+    - mountPath: "/tmp/etcd-snapshots-archive"
+      name: snapshot-archive
+  volumes:
+  - name: hostpath-snapshot
+    persistentVolumeClaim:
+      claimName: pvc-etcd-snapshots
+  - name: snapshot-archive
+    persistentVolumeClaim:
+      claimName: b-pvc
+  terminationGracePeriodSeconds: 1
+  nodeSelector:
+    kubernetes.io/hostname: master-2
+...
