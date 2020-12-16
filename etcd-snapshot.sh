@@ -1,12 +1,13 @@
 #!/bin/bash
 
 SNAPSHOT_HOST=${1}
-SNAPSHOT_DIR=${2:-/tmp/etcd-snapshots}
+SNAPSHOT_DIR=${2:-/home/core/etcd-snapshots}
+SNAPSHOT_DAYS=${3:-7}
 THIS_HOST=$(hostname -s)
 
 shopt -s nocasematch
 if [[ "${SNAPSHOT_HOST}" != "${THIS_HOST}" ]]; then
-    echo "This host (${SNAPSHOT_HOST}) is not the etcd-snapshot target (${THIS_HOST})." 
+    echo "This host (${THIS_HOST}) is not the etcd-snapshot target (${SNAPSHOT_HOST})." 
     exit 0
 fi
 
