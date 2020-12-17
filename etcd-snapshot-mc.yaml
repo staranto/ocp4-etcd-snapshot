@@ -1,0 +1,44 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 88-master-etcd-snapshot
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+      - contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9L3RtcC8kezI6LWV0Y2Qtc25hcHNob3RzfQpTTkFQU0hPVF9EQVlTPSR7MzotN30KVEhJU19IT1NUPSQoaG9zdG5hbWUgLXMpCgpzaG9wdCAtcyBub2Nhc2VtYXRjaAppZiBbWyAiJHtTTkFQU0hPVF9IT1NUfSIgIT0gIiR7VEhJU19IT1NUfSIgXV07IHRoZW4KICAgIGVjaG8gIlRoaXMgaG9zdCAoJHtUSElTX0hPU1R9KSBpcyBub3QgdGhlIGV0Y2Qtc25hcHNob3QgdGFyZ2V0ICgke1NOQVBTSE9UX0hPU1R9KS4iIAogICAgZXhpdCAwCmZpCgpta2RpciAtcCAke1NOQVBTSE9UX0RJUn0KCi91c3IvbG9jYWwvYmluL2NsdXN0ZXItYmFja3VwLnNoICR7U05BUFNIT1RfRElSfQoKCg==
+        mode: 493
+        overwrite: true
+        path: /usr/local/bin/etcd-snapshot.sh
+    systemd:
+      units:
+        - contents: |
+            [Unit]
+            Description=Scheduled snapshot of etcd datastore & k8s resources
+            
+            [Service]
+            Type=oneshot
+            Environment=TGT_DIR=etcd-snapshots
+            Environment=DAYS=7
+            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh master-0 ${TGT_DIR} ${DAYS}
+            
+            [Install]
+            WantedBy=multi-user.target
+          name: etcd-snapshot.service
+          enabled: true
+        - contents: |
+            [Unit]
+            Description=Run etcd-snapshot.service daily
+            
+            [Timer]
+            OnCalendar=00:01:00 America/New_York
+          name: etcd-snapshot.timer
+          enabled: true
+...
