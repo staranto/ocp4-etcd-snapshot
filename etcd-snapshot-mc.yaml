@@ -11,34 +11,35 @@ spec:
       version: 3.1.0
     storage:
       files:
-      - contents:
+      - path: /usr/local/bin/etcd-snapshot.sh
+        contents:
           source: >-
-            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9L3RtcC8kezI6LWV0Y2Qtc25hcHNob3RzfQpTTkFQU0hPVF9EQVlTPSR7MzotN30KVEhJU19IT1NUPSQoaG9zdG5hbWUgLXMpCgpzaG9wdCAtcyBub2Nhc2VtYXRjaAppZiBbWyAiJHtTTkFQU0hPVF9IT1NUfSIgIT0gIiR7VEhJU19IT1NUfSIgXV07IHRoZW4KICAgIGVjaG8gIlRoaXMgaG9zdCAoJHtUSElTX0hPU1R9KSBpcyBub3QgdGhlIGV0Y2Qtc25hcHNob3QgdGFyZ2V0ICgke1NOQVBTSE9UX0hPU1R9KS4iIAogICAgZXhpdCAwCmZpCgpta2RpciAtcCAke1NOQVBTSE9UX0RJUn0KCi91c3IvbG9jYWwvYmluL2NsdXN0ZXItYmFja3VwLnNoICR7U05BUFNIT1RfRElSfQoKZmluZCAke1NOQVBTSE9UX0RJUn0gLXR5cGUgZiAtbXRpbWUgKyR7U05BUFNIT1RfREFZU30gLWV4ZWMgcm0gLWYge30gXDsK
+            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9JHsyOi0vaG9tZS9jb3JlL2V0Y2Qtc25hcHNob3RzfQpTTkFQU0hPVF9EQVlTPSR7MzotN30KVEhJU19IT1NUPSQoaG9zdG5hbWUpClZBTElEX0RJUlM9Ii9ob21lL2NvcmUgL21udCAvdG1wIgoKc2hvcHQgLXMgbm9jYXNlbWF0Y2gKaWYgW1sgIiR7U05BUFNIT1RfSE9TVH0iICE9ICIke1RISVNfSE9TVH0iIF1dOyB0aGVuCiAgICBlY2hvICJUaGlzIG5vZGUgKCR7VEhJU19IT1NUfSkgaXMgbm90IHRoZSBldGNkLXNuYXBzaG90IHRhcmdldCBub2RlICgke1NOQVBTSE9UX0hPU1R9KS4iIAogICAgZXhpdCAwCmZpCgp2YWxpZD0wCmZvciBoIGluICR7VkFMSURfRElSU307IGRvCiAgICBpZiAgW1sgIiR7U05BUFNIT1RfRElSfSIgPX4gXiR7aH0vLiogXV07IHRoZW4KICAgICAgICB2YWxpZD0xCiAgICAgICAgYnJlYWsKICAgIGZpCmRvbmUKaWYgW1sgIiR7dmFsaWR9IiA9PSAiMCIgIF1dOyB0aGVuCiAgICBlY2hvICIke1NOQVBTSE9UX0RJUn0gaXMgbm90IGEgdmFsaWQgdGFyZ2V0IGRpcmVjdG9yeS4iCiAgICBleGl0IDEKZmkKCm1rZGlyIC1wICR7U05BUFNIT1RfRElSfQoKL3Vzci9sb2NhbC9iaW4vY2x1c3Rlci1iYWNrdXAuc2ggJHtTTkFQU0hPVF9ESVJ9CgpmaW5kICR7U05BUFNIT1RfRElSfSAtdHlwZSBmIC1tdGltZSArJHtTTkFQU0hPVF9EQVlTfSAtZGVsZXRlCg==
         mode: 493
         overwrite: true
-        path: /usr/local/bin/etcd-snapshot.sh
     systemd:
       units:
-        - contents: |
+        - name: etcd-snapshot.service
+          contents: |
             [Unit]
             Description=Scheduled snapshot of etcd datastore & k8s resources
             
             [Service]
             Type=oneshot
-            Environment=TGT_DIR=etcd-snapshots
-            Environment=DAYS=7
-            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh master-0 ${TGT_DIR} ${DAYS}
+            Environment=HOST=master-0.ocpa
+            Environment=TGT_DIR=/home/core/etcd-snapshots
+            Environment=DAYS=2
+            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh ${HOST} ${TGT_DIR} ${DAYS}
             
             [Install]
             WantedBy=multi-user.target
-          name: etcd-snapshot.service
           enabled: true
-        - contents: |
+        - name: etcd-snapshot.timer
+          contents: |
             [Unit]
             Description=Run etcd-snapshot.service daily
             
             [Timer]
             OnCalendar=00:01:00 America/New_York
-          name: etcd-snapshot.timer
           enabled: true
 ...
