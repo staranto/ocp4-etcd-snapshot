@@ -4,7 +4,7 @@ SNAPSHOT_HOST=${1}
 SNAPSHOT_DIR=${2:-/home/core/etcd-snapshots}
 SNAPSHOT_DAYS=${3:-7}
 THIS_HOST=$(hostname)
-VALID_DIRS="/home/core /mnt /tmp"
+VALID_DIRS="/home/core /mnt /tmp /var"
 
 shopt -s nocasematch
 if [[ "${SNAPSHOT_HOST}" != "${THIS_HOST}" ]]; then
