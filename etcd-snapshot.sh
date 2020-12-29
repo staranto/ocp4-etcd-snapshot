@@ -14,7 +14,7 @@ fi
 
 valid=0
 for h in ${VALID_DIRS}; do
-    if  [[ "${SNAPSHOT_DIR}" =~ ^${h}/.* ]]; then
+    if  [[ "${SNAPSHOT_DIR}" =~ ^${h}/[a-zA-z0-9_]+.* ]]; then
         valid=1
         break
     fi
