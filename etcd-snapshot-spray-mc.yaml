@@ -1,0 +1,87 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 89-master-etcd-snapshot-spray
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+      - path: /usr/local/bin/etcd-snapshot-spray-nfs.sh
+        contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9JHszOi0vdmFyL2hvbWUvY29yZS9ldGNkLXNuYXBzaG90c30KTkZTX1RHVD0kezJ9Ck5GU19NUD0kezQ6LS92YXIvaG9tZS9jb3JlL21udC9ldGNkLXNuYXBzaG90c30KVEhJU19IT1NUPSQoaG9zdG5hbWUpCgplY2hvICItLS0gUnVudGltZSAtLS0iCmVjaG8gIlNOQVBTSE9UX0hPU1Q9JHtTTkFQU0hPVF9IT1NUfSIKZWNobyAiU05BUFNIT1RfRElSPSR7U05BUFNIT1RfRElSfSIKZWNobyAiTkZTX1RHVD0ke05GU19UR1R9IgplY2hvICJORlNfTVA9JHtORlNfTVB9IgplY2hvICJXSE9BTUk9JCh3aG9hbWkpIgplbnYgfCBzb3J0CmVjaG8gIi0tLS0tLS0tLS0tLS0tLSIKCnNob3B0IC1zIG5vY2FzZW1hdGNoCmlmIFtbICIke1NOQVBTSE9UX0hPU1R9IiAhPSAiJHtUSElTX0hPU1R9IiBdXTsgdGhlbgogICAgZWNobyAiVGhpcyBub2RlICgke1RISVNfSE9TVH0pIGlzIG5vdCB0aGUgZXRjZC1zbmFwc2hvdCB0YXJnZXQgbm9kZSAoJHtTTkFQU0hPVF9IT1NUfSkuIiAKICAgIGV4aXQgMApmaQoKc2V0IC14Cgpta2RpciAtcCAke05GU19NUH0KCmVjaG8gIi0tLSBQcmUtbW91bnQgc3RhdGUgLS0tIgpscyAtbHRhICR7TkZTX01QfQoKbW91bnQgLXQgbmZzICR7TkZTX1RHVH0gJHtORlNfTVB9CgplY2hvICItLS0gUG9zdC1tb3VudCBzdGF0ZSAtLS0iCmxzIC1sdGEgJHtORlNfTVB9Cgpyc3luYyAtLWFyY2hpdmUgLS1kZWxldGUgLS1odW1hbi1yZWFkYWJsZSAtLW5vLWdyb3VwIC0tbm8tb3duZXIgLS12ZXJib3NlIFwKICAgICR7U05BUFNIT1RfRElSfS8gJHtORlNfTVB9Cgp1bW91bnQgJHtORlNfTVB9
+        mode: 493
+        overwrite: true
+      - path: /usr/local/bin/etcd-snapshot-spray-rsync.sh
+        contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9JHsyOi0vdmFyL2hvbWUvY29yZS9ldGNkLXNuYXBzaG90c30KVEhJU19IT1NUPSQoaG9zdG5hbWUpCgplY2hvICItLS0gUnVudGltZSAtLS0iCmVjaG8gIlNOQVBTSE9UX0hPU1Q9JHtTTkFQU0hPVF9IT1NUfSIKZWNobyAiU05BUFNIT1RfRElSPSR7U05BUFNIT1RfRElSfSIKZWNobyAiUlNZTkM9JCh3aGljaCByc3luYykiCmVjaG8gIlNTSD0kKHdoaWNoIHNzaCkiCmVjaG8gIldIT0FNST0kKHdob2FtaSkiCmVudiB8IHNvcnQKZWNobyAiLS0tLS0tLS0tLS0tLS0tIgoKc2hvcHQgLXMgbm9jYXNlbWF0Y2gKaWYgW1sgIiR7U05BUFNIT1RfSE9TVH0iICE9ICIke1RISVNfSE9TVH0iIF1dOyB0aGVuCiAgICBlY2hvICJUaGlzIG5vZGUgKCR7VEhJU19IT1NUfSkgaXMgbm90IHRoZSBldGNkLXNuYXBzaG90IHRhcmdldCBub2RlICgke1NOQVBTSE9UX0hPU1R9KS4iIAogICAgZXhpdCAwCmZpCgpldGNkZW52PSIvZXRjL2t1YmVybmV0ZXMvc3RhdGljLXBvZC1yZXNvdXJjZXMvZXRjZC1jZXJ0cy9jb25maWdtYXBzL2V0Y2Qtc2NyaXB0cy9ldGNkLmVudiIKaWYgWyAhIC1mICIke2V0Y2RlbnZ9IiBdOyB0aGVuCiAgICBlY2hvICJSZXF1aXJlZCBlbnYgZGVwZW5kZW5jaWVzIG5vdCBmb3VuZCAoJHtldGNkZW52fSkiCiAgICBleGl0IDEKZmkKc291cmNlICIke2V0Y2RlbnZ9IgoKc2V0IC14Cgpub2Rlcz0kKGNvbXBnZW4gLUEgdmFyaWFibGUgfCBncmVwIEVUQ0RfTkFNRSkKZm9yIG5vZGUgaW4gJG5vZGVzOyBkbwogICAgc2hvcHQgLXMgbm9jYXNlbWF0Y2gKICAgIGlmIFtbICIke1NOQVBTSE9UX0hPU1R9IiA9PSAiJHshbm9kZX0iIF1dOyB0aGVuCiAgICAgICAgZWNobyAiU2tpcHBpbmcgY2FuZGlkYXRlIG5vZGUgKCR7IW5vZGV9KSBzaW5jZSBpdCdzIHRoZSBldGNkLXNuYXBzaG90LXNwcmF5IHNvdXJjZSBub2RlICgke1NOQVBTSE9UX0hPU1R9KS4iIAogICAgICAgIGNvbnRpbnVlCiAgICBmaQoKICAgIGVjaG8gIkNvcHlpbmcgZnJvbSAke1NOQVBTSE9UX0hPU1R9IHRvICR7IW5vZGV9IgogICAgcnN5bmMgLS1hcmNoaXZlIC0tZGVsZXRlIC0tdmVyYm9zZSAtLWh1bWFuLXJlYWRhYmxlIFwKICAgICAgICAtLXJzaCAnc3NoIC1sIGNvcmUgLWkgL3Zhci9ob21lL2NvcmUvLnNzaC9pZF9yc2EnIFwKICAgICAgICAke1NOQVBTSE9UX0RJUn0vIFwKICAgICAgICBjb3JlQCR7IW5vZGV9OiR7U05BUFNIT1RfRElSfS8KZG9uZQo=
+        mode: 493
+        overwrite: true
+      - path: /home/core/.ssh/id_rsa
+        contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlHNUFJQkFBS0NBWUVBc1BlQ09wYXVTdjNUSDJhazQvWFhvaEJCL25MYWFuNDVrZi9CTTR2ZVBPbG5jMVJsCjJ4M2pPUnRseEdDRUtSdWNxRWVjekEyUGlPRjd3bGtyb3hma3ZyaTg1VTRzdHNMMmZHcVBKV0pPVTU3S3hudkQKVEozRi9jRGNGUTNEd09FNlp2TDUvQXBOdVliczRLcGtzcktrL3NJemgyYW5MN25yVi9UWUZycWtJS2FxS3l2cwoxNURyNGtMVVdMODJLYkFzSktnVmg0SVpCUmF5RHZXcGtOcHBEa0NQQll1cmlnSG1QRnFYS2Q2MDNvNCtmZGZxCjB0VDJrUFFNNmg3Y0xEcmRIYVhMdzNJdlVpQnQwVXRCaHpBOXdlUnlCZWxNZE5tcW1VRCtPNzVuWFhlM0xWQWYKdkNVMkxTVGJJL21SSHFKaHY0OUdjSWZTdGNzdlJIdHRUUnJGYitPbFpsRWtOSzVVUisxM2JlbDF2WmhqRnZ6SApITE1TTkNtaGxGdEoxbDJYVWtYeSthQ2JuR01sSUhXeHlDUnp0Q24zc2RJMFA4enBYTzFWQmtqNnVWdlFCcUJhClQrZ3U1MHU0WUVCYU9WZHhXS0FPenVuSytYT3kxYjkvVzI0cnc0VEdkcGYyRUlmc3BIcEJmV1RJNzd3ME5BVUwKK2J0Mlp2YUlPNFR4WjVGL0FnTUJBQUVDZ2dHQkFJMHNGYmFaWjljcEg1Zm9NVmd0VVdUV3BWN1B6cyt2ZkV1dApCRG9UdFNsUVpSZUsxMnB5TUVicFJVamdXZTNWT2liQVlpUWlHVVB2NU9PSWNSZzlRbHluVVFGNFdKRS9mSlNLCkNVR2daNjJyZWtYV2kxaitiK2piUm5hQk1ZMFgzNWdxOHlPT01LejFKdGllOVkvY2xXVXFGU05Kejh0eC9IMkIKTkRVRmxWTDZ3YnVJNGZxaGdKdFNCc1g1VzhMcjZIc2huM01uWk1BN2Q3WVpZYmpOazRzc0V5d3dYSnJPb3hXNAppdWg2NGp5OHFydUhXS3Z4K2ZSdXpES2toYTIvRWp0WFQ2NWlLeEpoc1JyM1FnMkd5UDNMQXM0MWM2WG52WThCCmVWaXNhWGlNemcyMy9vMmw2SkNoVUNxSTJwcEJpWC90NXRwdUJib2pObWIvQldxK3BaTjJjRjg4aTBpbEtienYKbHUxcFVTeTBWQ0tVc0xHcnFjWGdCZDBnT1d5bmxKUnFBZ280WlRiV2xsaS9OSndIQWQwdkNlanBtRTRFWi9pYQpUYlVoNEYzUDJISGk0VE9RMnhtOE1ESHJ4R3VxVDkwbWFHZGo2SVZVNFFVRDloOTBiTkpnMmtsdGNZWS9wTWtTCndPZlJkMktXUEVvTDVyNE1GU1BLWXEvZTMvdGVrUUtCd1FEa2Q4b0JZMURVeS9aTm1LV1ByVEM3MUdvNm10SncKeWl4VzZFOWFWWGd1cHJVdmJnMVRLdXZZMHBKa24zdHNOc1NPNldkNk5URWdmTFNyd2hqZGZOaXlnTnAyVDBFNwp1dTdISkdjeTFrSmE0ZjNOaDErUkt4R3pmWXVoZWZkMXlVZk9vRTBCNWlHdThTbDRiZDZkb205RkhCQTFRNFZ0ClVXSm0xNzJXamF2cG5YMXQ3cENYSVg0bjRYZVI1KzE2MFZtaE9hYlJ1UzNpUHRpd3VEZUxMR3daK1FjeEpaTVEKZS8yZUNHL0NwVHVNdU9tTExRNlRVYW5jNXRtcjRRMUM0cGtDZ2NFQXhrcnFsL2p2VjAzUjI5TkJRTkNub2FyVApBZS9VcEFReHhuZDlySGJHdmUyeHNJYXZYakt2QXM3Y0oreUc5Y1hMMC9qOHQ2SExSSEJ4cndmbUh3d3pMQlFvCnBVcFIySHFuWXZWZzRnZGgzN3crTlI1eHNhZVJlcUE2TjU1UmxhaWNYeDdObGNpL2J4Q0dWM0w3RFlDUVJUdVkKRjlKYVl3ZzFBR3kxNjYvSW53cG83NmJqUHVPbjBYdHVTa2lxY2NMSFdkTUk4UmsvVnI5MWZFUkRKbDcxNWU2Nwo0R1dNUzN1cUhkR0RrU0FNaGJLTUN1MUpTSDJzWmdaRXE2YW5VanZYQW9IQVpnY0V4QmZwR2c2M3dMRmhoa2N1CmswTHA2YUFJU0d4UTNzTEI1VEowQ0VsVWNvandGR3IvaGdXTGNMb3o4UUNJU05YODZ2dGtKQURzNGlNODNYU0sKaFRTNzJzZkw5dk9rL0hQS1RrNld0V1ZrNVdzR0I1czNQWFBjYmxFOGJISmx5ZVdXWGptNll4aTVqMWxwWi9ZSgpRTkNtZ0ZMVi9CcXpHZ0JRWHpLSFNqMlZyUWt6c3ZvM0QzSkY1bmV2ZXdDUXlVb29zRkhGSnRzd0E4TlFzcXMwCjMyaHhpTVloNWVPcFAvQytrQ3NmNjlrTUdxWVZjejZ0MzhPTUE1RHVUaWRKQW9IQkFNR0dNaWg1eWxVQlhSUlcKdkRPZXNFdW01V0xaaDBVLzFyaGt2Q0dLbG5LY3ZiT1Q3eWxXKzlrWXZHSzJoQXp2cXZ0STRKUHpjdWRyZW5naApsR1N1eW01MWlpbXZPK3V6NFJOQ2VmaCt6ZlhHeVV1Y1Y4ZlR5N2JMRTZaZWZDODhyTWhrenE0bGl6ZkEvK3Z2CkNyZmx4bWZiUHBmWk0xKzlqY1RKVkU4ZWN3Vk02cGNoNEZ6cllFaWhWMFZtWC9yQTUwQnlKeUx1eWhOR3JrbkcKY1diTWZONllQWUpHZVVMZUFXd3lvMTRLMGszVnNMbWxWY1ZLNmV0MHFLYUI4b0RlWndLQndDVE8xV3ZPaG8wcQorM0cyY2d0MzNxcEh6U2dtSGtRUkpuZHErTVNiOGFtY3RGTE9kUGZTTldKdFRka0s2cGNqQ0h3TEtya0JKSXFCCkt1OGVDTFNGSVNodXpmNzNqYTIxZFZEaUlLSVlUVm9IMWVNcTNHWU1UdDREcENlaTlKMDV5RkdjZ0o2MWdVb1MKcktYbG1XM1B6UWpDTnhmVzBUVUQ4dGtrL3c5a243SjJhM2RtUWNJOVFHK0FEaGhySkQ3MG9JN0JPNWdjTlVZeAo0Q1JXRkxTdG1Qa2ltSE9vbzZyOUpYcllQTjhtdEd1SnBaUWRPaVhjMVFsaDRKUEFhVjhDTkE9PQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+        mode: 384
+        user:
+          name: core
+        group:
+          name: core
+        overwrite: true
+      - path: /home/core/.ssh/id_rsa.pub
+        contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCZ1FDdzk0STZscTVLL2RNZlpxVGo5ZGVpRUVIK2N0cHFmam1SLzhFemk5NDg2V2R6VkdYYkhlTTVHMlhFWUlRcEc1eW9SNXpNRFkrSTRYdkNXU3VqRitTK3VMemxUaXkyd3ZaOGFvOGxZazVUbnNyR2U4Tk1uY1g5d053VkRjUEE0VHBtOHZuOENrMjVodXpncW1TeXNxVCt3ak9IWnFjdnVldFg5TmdXdXFRZ3Bxb3JLK3pYa092aVF0Ull2ellwc0N3a3FCV0hnaGtGRnJJTzlhbVEybWtPUUk4Rmk2dUtBZVk4V3BjcDNyVGVqajU5MStyUzFQYVE5QXpxSHR3c090MGRwY3ZEY2k5U0lHM1JTMEdITUQzQjVISUY2VXgwMmFxWlFQNDd2bWRkZDdjdFVCKzhKVFl0Sk5zaitaRWVvbUcvajBad2g5SzF5eTlFZTIxTkdzVnY0NlZtVVNRMHJsUkg3WGR0NlhXOW1HTVcvTWNjc3hJMEthR1VXMG5XWFpkU1JmTDVvSnVjWXlVZ2RiSElKSE8wS2ZleDBqUS96T2xjN1ZVR1NQcTVXOUFHb0ZwUDZDN25TN2hnUUZvNVYzRllvQTdPNmNyNWM3TFZ2MzliYml2RGhNWjJsL1lRaCt5a2VrRjlaTWp2dkRRMEJRdjV1M1ptOW9nN2hQRm5rWDg9IHN0ZXBoZW50YUB0YXJhbnRvc21icC5sYW4K
+        mode: 420
+        user:
+          name: core
+        group:
+          name: core
+        overwrite: true
+    systemd:
+      units:
+        - name: etcd-snapshot-spray-nfs.service
+          contents: |
+            [Unit]
+            Description=Spray snapshot files to NFS storage.
+            
+            [Service]
+            Type=oneshot
+            Environment=HOST=master-0.ocpa
+            Environment=NFS_TGT=truenas.0.taranto.dev:/mnt/pool-0/backups/ocpa
+            Environment=TGT_DIR=/var/home/core/etcd-snapshots
+            ExecStart=/usr/local/bin/etcd-snapshot-spray-nfs.sh ${HOST} ${NFS_TGT} ${TGT_DIR}
+          enabled: false
+        - name: etcd-snapshot-spray-nfs.timer
+          contents: |
+            [Unit]
+            Description=Run etcd-snapshot-spray-nfs.service daily
+            
+            [Timer]
+            OnCalendar=00:01:05 America/New_York
+          enabled: true
+        - name: etcd-snapshot-spray-rsync.service
+          contents: |
+            [Unit]
+            Description=Spray snapshot files to etcd nodes.
+            
+            [Service]
+            Type=oneshot
+            Environment=HOST=master-0.ocpa
+            Environment=TGT_DIR=/var/home/core/etcd-snapshots
+            ExecStart=/usr/local/bin/etcd-snapshot-spray-rsync.sh ${HOST} ${TGT_DIR}
+          enabled: false
+        - name: etcd-snapshot-spray-rsync.timer
+          contents: |
+            [Unit]
+            Description=Run etcd-snapshot-spray-rsync.service daily
+            
+            [Timer]
+            OnCalendar=00:01:10 America/New_York
+          enabled: true
+...

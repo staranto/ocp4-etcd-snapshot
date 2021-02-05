@@ -1,0 +1,42 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 88-master-etcd-snapshot
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+      - path: /usr/local/bin/etcd-snapshot.sh
+        contents:
+          source: >-
+            data:text/plain;charset=utf-8;base64,IyEvYmluL2Jhc2gKClNOQVBTSE9UX0hPU1Q9JHsxfQpTTkFQU0hPVF9ESVI9JHsyOi0vaG9tZS9jb3JlL2V0Y2Qtc25hcHNob3RzfQpTTkFQU0hPVF9EQVlTPSR7MzotN30KVEhJU19IT1NUPSQoaG9zdG5hbWUpClZBTElEX0RJUlM9Ii9ob21lL2NvcmUgL21udCAvdG1wIC92YXIiCgplY2hvICItLS0gUnVudGltZSAtLS0iCmVjaG8gIlNOQVBTSE9UX0hPU1Q9JHtTTkFQU0hPVF9IT1NUfSIKZWNobyAiU05BUFNIT1RfRElSPSR7U05BUFNIT1RfRElSfSIKZWNobyAiU05BUFNIT1RfREFZUz0ke1NOQVBTSE9UX0RBWVN9IgplY2hvICItLS0tLS0tLS0tLS0tLS0iCgpzaG9wdCAtcyBub2Nhc2VtYXRjaAppZiBbWyAiJHtTTkFQU0hPVF9IT1NUfSIgIT0gIiR7VEhJU19IT1NUfSIgXV07IHRoZW4KICAgIGVjaG8gIlRoaXMgbm9kZSAoJHtUSElTX0hPU1R9KSBpcyBub3QgdGhlIGV0Y2Qtc25hcHNob3QgdGFyZ2V0IG5vZGUgKCR7U05BUFNIT1RfSE9TVH0pLiIgCiAgICBleGl0IDAKZmkKCnZhbGlkPTAKZm9yIGggaW4gJHtWQUxJRF9ESVJTfTsgZG8KICAgIGlmICBbWyAiJHtTTkFQU0hPVF9ESVJ9IiA9fiBeJHtofS9bYS16QS16MC05X10rLiogXV07IHRoZW4KICAgICAgICB2YWxpZD0xCiAgICAgICAgYnJlYWsKICAgIGZpCmRvbmUKaWYgW1sgIiR7dmFsaWR9IiA9PSAiMCIgIF1dOyB0aGVuCiAgICBlY2hvICIke1NOQVBTSE9UX0RJUn0gaXMgbm90IGEgdmFsaWQgdGFyZ2V0IGRpcmVjdG9yeS4iCiAgICBleGl0IDEKZmkKCm1rZGlyIC1wICR7U05BUFNIT1RfRElSfQoKL3Vzci9sb2NhbC9iaW4vY2x1c3Rlci1iYWNrdXAuc2ggJHtTTkFQU0hPVF9ESVJ9CgpzbGVlcCAzCgplY2hvICItLS0gUHJlLXB1cmdlIHN0YXRlIC0tLSIKbHMgLWx0YSAke1NOQVBTSE9UX0RJUn0KCmVjaG8gIi0tLSBQdXJnaW5nIHN0YWxlIHNuYXBzaG90cyAtLS0iCmZpbmQgJHtTTkFQU0hPVF9ESVJ9IC10eXBlIGYgLW10aW1lICske1NOQVBTSE9UX0RBWVN9IC1wcmludCAtZGVsZXRlCg==
+        mode: 493
+        overwrite: true
+    systemd:
+      units:
+        - name: etcd-snapshot.service
+          contents: |
+            [Unit]
+            Description=Scheduled snapshot of etcd datastore & k8s resources
+            
+            [Service]
+            Type=oneshot
+            Environment=HOST=master-0.ocpa
+            Environment=TGT_DIR=/home/core/etcd-snapshots
+            Environment=DAYS=3
+            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh ${HOST} ${TGT_DIR} ${DAYS}
+          enabled: false
+        - name: etcd-snapshot.timer
+          contents: |
+            [Unit]
+            Description=Run etcd-snapshot.service daily
+            
+            [Timer]
+            OnCalendar=00:01:00 America/New_York
+          enabled: true
+...
