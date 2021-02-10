@@ -63,7 +63,7 @@ spec:
             Description=Run etcd-snapshot-spray-nfs.service daily
             
             [Timer]
-            OnCalendar=00:01:05 America/New_York
+            OnCalendar=00:10:00 America/New_York
           enabled: true
         - name: etcd-snapshot-spray-rsync.service
           contents: |
@@ -82,6 +82,6 @@ spec:
             Description=Run etcd-snapshot-spray-rsync.service daily
             
             [Timer]
-            OnCalendar=00:01:10 America/New_York
+            OnCalendar=00:05:00 America/New_York
           enabled: true
 ...
