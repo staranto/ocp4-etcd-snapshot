@@ -33,16 +33,6 @@ spec:
         group:
           name: core
         overwrite: true
-      - path: /home/core/.ssh/id_rsa.pub
-        contents:
-          source: >-
-            data:text/plain;charset=utf-8;base64,c3NoLXJzYSBBQUFBQjNOemFDMXljMkVBQUFBREFRQUJBQUFCZ1FDdzk0STZscTVLL2RNZlpxVGo5ZGVpRUVIK2N0cHFmam1SLzhFemk5NDg2V2R6VkdYYkhlTTVHMlhFWUlRcEc1eW9SNXpNRFkrSTRYdkNXU3VqRitTK3VMemxUaXkyd3ZaOGFvOGxZazVUbnNyR2U4Tk1uY1g5d053VkRjUEE0VHBtOHZuOENrMjVodXpncW1TeXNxVCt3ak9IWnFjdnVldFg5TmdXdXFRZ3Bxb3JLK3pYa092aVF0Ull2ellwc0N3a3FCV0hnaGtGRnJJTzlhbVEybWtPUUk4Rmk2dUtBZVk4V3BjcDNyVGVqajU5MStyUzFQYVE5QXpxSHR3c090MGRwY3ZEY2k5U0lHM1JTMEdITUQzQjVISUY2VXgwMmFxWlFQNDd2bWRkZDdjdFVCKzhKVFl0Sk5zaitaRWVvbUcvajBad2g5SzF5eTlFZTIxTkdzVnY0NlZtVVNRMHJsUkg3WGR0NlhXOW1HTVcvTWNjc3hJMEthR1VXMG5XWFpkU1JmTDVvSnVjWXlVZ2RiSElKSE8wS2ZleDBqUS96T2xjN1ZVR1NQcTVXOUFHb0ZwUDZDN25TN2hnUUZvNVYzRllvQTdPNmNyNWM3TFZ2MzliYml2RGhNWjJsL1lRaCt5a2VrRjlaTWp2dkRRMEJRdjV1M1ptOW9nN2hQRm5rWDg9IHN0ZXBoZW50YUB0YXJhbnRvc21icC5sYW4K
-        mode: 420
-        user:
-          name: core
-        group:
-          name: core
-        overwrite: true
     systemd:
       units:
         - name: etcd-snapshot-spray-nfs.service
