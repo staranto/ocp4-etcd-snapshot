@@ -13,7 +13,7 @@ echo "SNAPSHOT_DAYS=${SNAPSHOT_DAYS}"
 echo "---------------"
 
 shopt -s nocasematch
-if [[ "${SNAPSHOT_HOST}" != "${THIS_HOST}" ]]; then
+if [[ "${THIS_HOST}" != ${SNAPSHOT_HOST}* ]]; then
     echo "This node (${THIS_HOST}) is not the etcd-snapshot target node (${SNAPSHOT_HOST})." 
     exit 0
 fi
