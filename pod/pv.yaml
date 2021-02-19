@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-etcd-snapshot
+spec:
+  capacity:
+    storage: 100G
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: truenas.0.taranto.dev
+    path: /mnt/pool-0/backups/ocpa
+...
