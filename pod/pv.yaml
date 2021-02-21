@@ -9,7 +9,15 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: truenas.0.taranto.dev
-    path: /mnt/pool-0/backups/ocpa
+  storageClassName: etcd-snapshot
+  # nfs:
+  #   server: truenas.0.taranto.dev
+  #   path: /mnt/pool-0/backups/ocpa
+  csi:
+    driver: nfs.csi.k8s.io
+    readOnly: false
+    volumeHandle: etcd-snapshot
+    volumeAttributes:
+      server: truenas.0.taranto.dev
+      share: /mnt/pool-0/backups/ocpa
 ...

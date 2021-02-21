@@ -11,4 +11,5 @@ spec:
       storage: 100G
     limits:
       storage: 100G
+  storageClassName: etcd-snapshot
 ...
