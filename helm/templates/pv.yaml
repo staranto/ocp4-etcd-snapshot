@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.storage.baseName }}
+spec:
+  capacity:
+    storage: {{ .Values.storage.capacity }}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.storage.storageClassName }}
+  {{- if eq .Values.storage.driver "csi" }}
+  csi:
+    driver: nfs.csi.k8s.io
+    readOnly: false
+    volumeHandle: {{ .Release.Name }}
+    volumeAttributes:
+      server: {{ .Values.storage.server }}
+      share: {{ .Values.storage.path }}
+  {{- else if eq .Values.storage.driver "intree" }}
+  nfs:
+    server: {{ .Values.storage.server }}
+    path: {{ .Values.storage.path }}
+  {{- end }}
+...

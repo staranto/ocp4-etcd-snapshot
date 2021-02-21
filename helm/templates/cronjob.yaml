@@ -1,0 +1,58 @@
+# https://access.redhat.com/articles/4047481
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: etcd-snapshotter
+  labels:
+    {{ .Values.labelDomain }}/app: {{ .Release.Name }}
+spec:
+  concurrencyPolicy: Forbid
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            etcd-snapshot.{{ .Values.labelDomain }}/role: snapshot
+          tolerations:
+          - key: "node-role.kubernetes.io/master"
+            operator: "Exists"
+            effect: "NoSchedule"
+          containers:
+          - name: etcd-snapshotter
+            image: registry.access.redhat.com/rhel7/rhel-tools 
+            imagePullPolicy: IfNotPresent
+            command:
+              - "chroot"
+              - "/host"
+              - "/usr/local/bin/etcd-snapshot.sh"
+              - "pod-mode"
+              - "{{ .Values.snapshot.directory }}"
+              - "{{ .Values.snapshot.purgeDays }}"
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsGroup: 0
+            volumeMounts:
+            - name: node-root
+              mountPath: /host
+              readOnly: false
+              mountPropagation: HostToContainer
+            - name: etcd-snapshot
+              mountPath: {{ .Values.snapshot.directory }}
+              readOnly: false
+          restartPolicy: Never
+          {{- if eq .Values.serviceAccount.use true }}
+          serviceAccountName: etcd-snapshot
+          {{- end }}
+          terminationGracePeriodSeconds: 1
+          volumes:
+          - name: etcd-snapshot
+            persistentVolumeClaim: 
+              claimName: {{ .Values.storage.baseName }}
+          - name: node-root
+            hostPath:
+              path: /
+              type: Directory
+...
