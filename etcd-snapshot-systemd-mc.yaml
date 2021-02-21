@@ -1,0 +1,34 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 88-master-etcd-snapshot-systemd
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+        - name: etcd-snapshot.service
+          contents: |
+            [Unit]
+            Description=Scheduled snapshot of etcd datastore & k8s resources
+            
+            [Service]
+            Type=oneshot
+            Environment=HOST=master-0.ocpa
+            Environment=TGT_DIR=/home/core/etcd-snapshots
+            Environment=DAYS=3
+            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh ${HOST} ${TGT_DIR} ${DAYS}
+          enabled: false
+        - name: etcd-snapshot.timer
+          contents: |
+            [Unit]
+            Description=Run etcd-snapshot.service daily
+            
+            [Timer]
+            OnCalendar=00:01:00 America/New_York
+          enabled: true
+...
