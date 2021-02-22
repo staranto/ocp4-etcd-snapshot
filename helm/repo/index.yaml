@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  etcd-snapshot:
+  - apiVersion: v2
+    appVersion: 1.1.0
+    created: "2021-02-22T06:05:26.25803-05:00"
+    description: etcd-snapshot pod mode
+    digest: b1086df0d50ac281579a34329b98cafed958a0052332ad4c498e5f8bbc532980
+    name: etcd-snapshot
+    type: application
+    urls:
+    - https://staranto.github.io/ocp4-etcd-snapshot/etcd-snapshot-0.1.0.tgz
+    version: 0.1.0
+generated: "2021-02-22T06:05:26.257571-05:00"
