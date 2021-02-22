@@ -35,7 +35,7 @@ spec:
             hostPath:
               path: /
           initContainers:
-          - name: etcd-snapshotter
+          - name: etcd-snapshot
             image: {{ .Values.image }} 
             imagePullPolicy: IfNotPresent
             command:
@@ -57,8 +57,6 @@ spec:
             image: {{ .Values.image }} 
             imagePullPolicy: IfNotPresent
             command:
-            # - "sleep"
-            # - "1800"
             - "/etcd-snapshot-sync.sh"
             - "/source-dir"
             - "/target-dir"
