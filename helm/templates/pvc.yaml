@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.storage.baseName }}
+  name: {{ .Values.storage.pvName }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -11,5 +11,7 @@ spec:
       storage: {{ .Values.storage.capacity }}
     limits:
       storage: {{ .Values.storage.capacity }}
+  {{- if .Values.storage.storageClassName }}
   storageClassName: {{ .Values.storage.storageClassName }}
+  {{- end }}
 ...
