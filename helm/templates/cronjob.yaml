@@ -19,40 +19,58 @@ spec:
           - key: "node-role.kubernetes.io/master"
             operator: "Exists"
             effect: "NoSchedule"
-          containers:
-          - name: etcd-snapshotter
-            image: registry.access.redhat.com/rhel7/rhel-tools 
-            imagePullPolicy: IfNotPresent
-            command:
-              - "chroot"
-              - "/host"
-              - "/usr/local/bin/etcd-snapshot.sh"
-              - "pod-mode"
-              - "{{ .Values.snapshot.directory }}"
-              - "{{ .Values.snapshot.purgeDays }}"
-            securityContext:
-              privileged: true
-              runAsUser: 0
-              runAsGroup: 0
-            volumeMounts:
-            - name: node-root
-              mountPath: /host
-              readOnly: false
-              mountPropagation: HostToContainer
-            - name: etcd-snapshot
-              mountPath: {{ .Values.snapshot.directory }}
-              readOnly: false
           restartPolicy: Never
           {{- if eq .Values.serviceAccount.use true }}
           serviceAccountName: etcd-snapshot
           {{- end }}
           terminationGracePeriodSeconds: 1
           volumes:
-          - name: etcd-snapshot
+          - name: source-dir
+            hostPath:
+              path: {{ .Values.snapshot.directory }}
+          - name: target-dir
             persistentVolumeClaim: 
-              claimName: {{ .Values.storage.baseName }}
-          - name: node-root
+              claimName: {{ .Values.storage.pvName }}
+          - name: host
             hostPath:
               path: /
-              type: Directory
+          initContainers:
+          - name: etcd-snapshotter
+            image: {{ .Values.image }} 
+            imagePullPolicy: IfNotPresent
+            command:
+            - "chroot"
+            - "/host"
+            - "/usr/local/bin/etcd-snapshot.sh"
+            - "pod-mode"
+            - "{{ .Values.snapshot.directory }}"
+            - "{{ .Values.snapshot.purgeDays }}"
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsGroup: 0
+            volumeMounts:
+            - name: host
+              mountPath: /host
+          containers:
+          - name: etcd-snapshot-sync
+            image: {{ .Values.image }} 
+            imagePullPolicy: IfNotPresent
+            command:
+            # - "sleep"
+            # - "1800"
+            - "/etcd-snapshot-sync.sh"
+            - "/source-dir"
+            - "/target-dir"
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsGroup: 0
+            volumeMounts:
+            - name: source-dir
+              mountPath: /source-dir
+              readOnly: false          
+            - name: target-dir
+              mountPath: /target-dir
+              readOnly: false          
 ...
