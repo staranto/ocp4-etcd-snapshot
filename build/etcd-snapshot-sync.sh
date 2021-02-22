@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /usr/bin/env bash
 
 SOURCE_DIR=${1}
 TARGET_DIR=${2} 
