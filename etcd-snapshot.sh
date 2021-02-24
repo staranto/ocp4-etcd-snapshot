@@ -34,7 +34,9 @@ mkdir -p ${SNAPSHOT_DIR}
 
 /usr/local/bin/cluster-backup.sh ${SNAPSHOT_DIR}
 
-sleep 3
+chown -R core:core ${SNAPSHOT_DIR}
+
+sleep 1
 
 if [[ "${SNAPSHOT_DAYS}" == "0" ]]; then
     echo "Skipping snapshot purge."
