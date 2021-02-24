@@ -1,31 +1,64 @@
+{{- if eq .Values.mode "pv" }}
 
+{{- if .Values.pv.storageClassName }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.pv.storageClassName }}
+provisioner: nfs.csi.k8s.io
+parameters:
+  type: gp2
+reclaimPolicy: Retain
+allowVolumeExpansion: false
+volumeBindingMode: Immediate
+{{- end }}
 
-{{- if .Release.IsInstall }}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Values.storage.pvName }}
+  name: {{ .Values.pv.name }}
 spec:
   capacity:
-    storage: {{ .Values.storage.capacity }}
+    storage: {{ .Values.pv.capacity }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  {{- if .Values.storage.storageClassName }}
-  storageClassName: {{ .Values.storage.storageClassName }}
+
+  {{- if .Values.pv.storageClassName }}
+  storageClassName: {{ .Values.pv.storageClassName }}
   {{- end }}
-  {{- if eq .Values.storage.driver "csi" }}
+
+  {{- if eq .Values.pv.driver "csi" }}
   csi:
     driver: nfs.csi.k8s.io
     readOnly: false
     volumeHandle: {{ .Release.Name }}
     volumeAttributes:
-      server: {{ .Values.storage.server }}
-      share: {{ .Values.storage.path }}
-  {{- else if eq .Values.storage.driver "intree" }}
+      server: {{ .Values.pv.server }}
+      share: {{ .Values.pv.path }}
+  {{- else if eq .Values.pv.driver "intree" }}
   nfs:
-    server: {{ .Values.storage.server }}
-    path: {{ .Values.storage.path }}
+    server: {{ .Values.pv.server }}
+    path: {{ .Values.pv.path }}
   {{- end }}
+  
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.pv.name }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.pv.capacity }}
+    limits:
+      storage: {{ .Values.pv.capacity }}
+  {{- if .Values.pv.storageClassName }}
+  storageClassName: {{ .Values.pv.storageClassName }}
+  {{- end }}
+
 {{- end }}

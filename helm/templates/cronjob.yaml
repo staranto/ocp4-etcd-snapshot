@@ -25,17 +25,30 @@ spec:
           {{- end }}
           terminationGracePeriodSeconds: 1
           volumes:
-          - name: source-dir
-            hostPath:
-              path: {{ .Values.snapshot.directory }}
-          - name: target-dir
-            persistentVolumeClaim: 
-              claimName: {{ .Values.storage.pvName }}
+          - name: etcd-snapshot-sync-sh
+            configMap:
+              name: etcd-snapshot-sync-sh
+              defaultMode: 0755
           - name: host
             hostPath:
               path: /
+          - name: source-dir
+            hostPath:
+              path: {{ .Values.snapshot.directory }}
+          # - name: ssh-key
+          #   secret:
+          #     secretName: ssh-key
+          #     defaultMode: 0400
+          #     items:
+          #     - key: ssh-privatekey
+          #       path: id_rsa
+          {{- if eq .Values.mode "pv" }}
+          - name: target-dir
+            persistentVolumeClaim: 
+              claimName: {{ .Values.pv.name }}
+          {{- end }}
           initContainers:
-          - name: etcd-snapshot
+          - name: snapshotter
             image: {{ .Values.image }} 
             imagePullPolicy: IfNotPresent
             command:
@@ -53,11 +66,13 @@ spec:
             - name: host
               mountPath: /host
           containers:
-          - name: etcd-snapshot-sync
+          - name: syncer
             image: {{ .Values.image }} 
             imagePullPolicy: IfNotPresent
             command:
-            - "/etcd-snapshot-sync.sh"
+            # - "sleep"
+            # - "600"
+            - "/etcd-snapshot-sync/etcd-snapshot-sync.sh"
             - "/source-dir"
             - "/target-dir"
             securityContext:
@@ -65,10 +80,16 @@ spec:
               runAsUser: 0
               runAsGroup: 0
             volumeMounts:
+            - name: etcd-snapshot-sync-sh
+              mountPath: /etcd-snapshot-sync
             - name: source-dir
               mountPath: /source-dir
               readOnly: false          
+            # - name: ssh-key
+            #   mountPath: /root/.ssh
+            {{- if eq .Values.mode "pv" }}
             - name: target-dir
               mountPath: /target-dir
               readOnly: false          
+            {{- end }}
 ...
