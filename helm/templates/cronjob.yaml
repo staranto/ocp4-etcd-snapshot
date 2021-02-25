@@ -1,4 +1,4 @@
-# https://access.redhat.com/articles/4047481
+{{/*  https://access.redhat.com/articles/4047481 */}}
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
@@ -8,7 +8,7 @@ metadata:
     {{ .Values.labelDomain }}/app: {{ .Release.Name }}
 spec:
   concurrencyPolicy: Forbid
-  schedule: {{ .Values.cronjob.schedule | quote }}
+  schedule: {{ .Values.schedule | quote }}
   jobTemplate:
     spec:
       template:
@@ -35,13 +35,15 @@ spec:
           - name: source-dir
             hostPath:
               path: {{ .Values.snapshot.directory }}
-          # - name: ssh-key
-          #   secret:
-          #     secretName: ssh-key
-          #     defaultMode: 0400
-          #     items:
-          #     - key: ssh-privatekey
-          #       path: id_rsa
+          {{- if eq .Values.mode "sync" }}
+          - name: ssh-key
+            secret:
+              secretName: ssh-key
+              defaultMode: 0400
+              items:
+              - key: ssh-privatekey
+                path: id_rsa
+          {{- end }}
           {{- if eq .Values.mode "pv" }}
           - name: target-dir
             persistentVolumeClaim: 
@@ -56,8 +58,8 @@ spec:
             - "/host"
             - "/usr/local/bin/etcd-snapshot.sh"
             - "pod-mode"
-            - "{{ .Values.snapshot.directory }}"
-            - "{{ .Values.snapshot.purgeDays }}"
+            - {{ .Values.snapshot.directory | quote }}
+            - {{ .Values.snapshot.purgeDays | quote }}
             securityContext:
               privileged: true
               runAsUser: 0
@@ -70,11 +72,19 @@ spec:
             image: {{ .Values.image }} 
             imagePullPolicy: IfNotPresent
             command:
-            # - "sleep"
-            # - "600"
-            - "/etcd-snapshot-sync/etcd-snapshot-sync.sh"
-            - "/source-dir"
-            - "/target-dir"
+            {{- if .Values.debug }}
+              - "sleep"
+              - "600"
+            {{- else }}
+              - "/etcd-snapshot-sync/etcd-snapshot-sync.sh"
+              - {{ .Values.mode | quote }}
+              - "/source-dir"
+            {{- if eq .Values.mode "pv" }}
+              - "/target-dir"
+            {{- else }}
+              - {{ .Values.snapshot.directory | quote }}
+            {{- end }}
+            {{- end }}
             securityContext:
               privileged: true
               runAsUser: 0
@@ -85,8 +95,10 @@ spec:
             - name: source-dir
               mountPath: /source-dir
               readOnly: false          
-            # - name: ssh-key
-            #   mountPath: /root/.ssh
+            {{- if eq .Values.mode "sync" }}
+            - name: ssh-key
+              mountPath: /root/.ssh
+            {{- end }}
             {{- if eq .Values.mode "pv" }}
             - name: target-dir
               mountPath: /target-dir
