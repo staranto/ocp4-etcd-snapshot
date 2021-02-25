@@ -38,10 +38,10 @@ spec:
           {{- if eq .Values.mode "sync" }}
           - name: ssh-key
             secret:
-              secretName: ssh-key
+              secretName: {{ .Values.sync.sshSecret | quote }}
               defaultMode: 0400
               items:
-              - key: ssh-privatekey
+              - key: private
                 path: id_rsa
           {{- end }}
           {{- if eq .Values.mode "pv" }}
