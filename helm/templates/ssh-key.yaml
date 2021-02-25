@@ -1,0 +1,11 @@
+{{- if eq .Values.mode "sync" }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ssh-key
+type: kubernetes.io/ssh-auth
+data:
+  ssh-privatekey: {{ .Files.Get "id_rsa" | b64enc }}
+  ssh-publickey: {{ .Files.Get "id_rsa.pub" | b64enc }}
+{{- end }}
