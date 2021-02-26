@@ -3,7 +3,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: etcd-snapshotter
+  name: {{ .Release.Name | quote }}
   labels:
     {{ .Values.labelDomain }}/app: {{ .Release.Name }}
 spec:
@@ -21,13 +21,13 @@ spec:
             effect: "NoSchedule"
           restartPolicy: Never
           {{- if eq .Values.serviceAccount.use true }}
-          serviceAccountName: etcd-snapshot
+          serviceAccountName: {{ .Release.Name | quote }}
           {{- end }}
           terminationGracePeriodSeconds: 1
           volumes:
           - name: etcd-snapshot-sync-sh
             configMap:
-              name: etcd-snapshot-sync-sh
+              name: {{ .Release.Name }}-sync-sh
               defaultMode: 0755
           - name: host
             hostPath:
@@ -47,8 +47,9 @@ spec:
           {{- if eq .Values.mode "pv" }}
           - name: target-dir
             persistentVolumeClaim: 
-              claimName: {{ .Values.pv.name }}
+              claimName: {{ .Release.Name | quote }}
           {{- end }}
+
           initContainers:
           - name: snapshotter
             image: {{ .Values.image }} 
@@ -67,9 +68,10 @@ spec:
             volumeMounts:
             - name: host
               mountPath: /host
+
           containers:
           - name: syncer
-            image: {{ .Values.image }} 
+            image: {{ .Values.image | quote }} 
             imagePullPolicy: IfNotPresent
             command:
             {{- if .Values.debug }}
@@ -90,6 +92,10 @@ spec:
               runAsUser: 0
               runAsGroup: 0
             volumeMounts:
+            {{- if .Values.debug }}
+            - name: host
+              mountPath: /host
+            {{- else }}
             - name: etcd-snapshot-sync-sh
               mountPath: /etcd-snapshot-sync
             - name: source-dir
@@ -103,5 +109,6 @@ spec:
             - name: target-dir
               mountPath: /target-dir
               readOnly: false          
+            {{- end }}
             {{- end }}
 ...

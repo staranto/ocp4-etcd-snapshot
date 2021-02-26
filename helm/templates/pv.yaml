@@ -5,7 +5,7 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: {{ .Values.pv.storageClassName }}
+  name: {{ .Release.Name | quote }}
 provisioner: nfs.csi.k8s.io
 parameters:
   type: gp2
@@ -18,23 +18,20 @@ volumeBindingMode: Immediate
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ .Values.pv.name }}
+  name: {{ .Release.Name | quote }}
 spec:
   capacity:
     storage: {{ .Values.pv.capacity }}
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-
-  {{- if .Values.pv.storageClassName }}
-  storageClassName: {{ .Values.pv.storageClassName }}
-  {{- end }}
+  storageClassName: {{ .Release.Name | quote }}
 
   {{- if eq .Values.pv.driver "csi" }}
   csi:
     driver: nfs.csi.k8s.io
     readOnly: false
-    volumeHandle: {{ .Release.Name }}
+    volumeHandle: {{ .Release.Name | quote}}
     volumeAttributes:
       server: {{ .Values.pv.server }}
       share: {{ .Values.pv.path }}
@@ -48,7 +45,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.pv.name }}
+  name: {{ .Release.Name | quote }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -57,8 +54,5 @@ spec:
       storage: {{ .Values.pv.capacity }}
     limits:
       storage: {{ .Values.pv.capacity }}
-  {{- if .Values.pv.storageClassName }}
-  storageClassName: {{ .Values.pv.storageClassName }}
-  {{- end }}
-
+  storageClassName: {{ .Release.Name | quote }}
 {{- end }}

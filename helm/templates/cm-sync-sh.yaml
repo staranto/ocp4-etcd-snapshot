@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: etcd-snapshot-sync-sh
+  name: {{ .Release.Name }}-sync-sh
 data:
   etcd-snapshot-sync.sh: |+
     #! /usr/bin/env bash
