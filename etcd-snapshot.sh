@@ -12,6 +12,8 @@ echo "SNAPSHOT_DIR=${SNAPSHOT_DIR}"
 echo "SNAPSHOT_DAYS=${SNAPSHOT_DAYS}"
 echo "---------------"
 
+set -x
+
 shopt -s nocasematch
 if [[ "pod-mode" != "${SNAPSHOT_HOST}" ]] && [[ "${THIS_HOST}" != ${SNAPSHOT_HOST}* ]]; then
     echo "This node (${THIS_HOST}) is not the etcd-snapshot target node (${SNAPSHOT_HOST})." 
@@ -47,4 +49,4 @@ echo "--- Pre-purge state ---"
 ls -l ${SNAPSHOT_DIR}
 
 echo "--- Purging stale snapshots ---"
-find ${SNAPSHOT_DIR} -type f -mtime +${SNAPSHOT_DAYS} -print -delete
+find ${SNAPSHOT_DIR} -type f -mtime ${SNAPSHOT_DAYS} -print -delete
