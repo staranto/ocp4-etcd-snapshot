@@ -3,7 +3,17 @@ entries:
   etcd-snapshot:
   - apiVersion: v2
     appVersion: 1.1.0
-    created: "2021-02-26T19:11:09.383684-05:00"
+    created: "2021-02-26T19:37:01.949943-05:00"
+    description: Kubernetes native snapshotting of etcd datastore.
+    digest: e69ddc03fbe03c98f3eea31e9ed4cb880e8db363ca321cb7770f579d6d0a8f15
+    name: etcd-snapshot
+    type: application
+    urls:
+    - etcd-snapshot-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.1.0
+    created: "2021-02-26T19:37:01.94956-05:00"
     description: etcd-snapshot pod mode
     digest: 9aeb236bd7f776a3c27828c698533c4c791e25097d0b1ddd4ad5f7b92e70f6a0
     name: etcd-snapshot
@@ -11,4 +21,4 @@ entries:
     urls:
     - etcd-snapshot-0.1.0.tgz
     version: 0.1.0
-generated: "2021-02-26T19:11:09.382243-05:00"
+generated: "2021-02-26T19:37:01.94907-05:00"

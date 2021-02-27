@@ -1,7 +1,7 @@
 apiVersion: v2
 name: etcd-snapshot
-description: etcd-snapshot pod mode
+description: Kubernetes native snapshotting of etcd datastore.
 
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "1.1.0"
