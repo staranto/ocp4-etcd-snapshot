@@ -1,7 +1,7 @@
 debug: false
 
 # Node is in UTC, which is +5 from a real TZ.
-schedule: "27 * * * *"
+schedule: "30 13 * * *"
 
 # pv = /target-dir is PV-backed
 # sync = use snapshot.directory and then sync to 
@@ -10,7 +10,7 @@ mode: sync
 
 snapshot:
   directory: "/var/home/core/etcd-snapshots"
-  purgeDays: 3
+  purgeDays: 1
 
 pv:
   name: etcd-snapshot
@@ -18,7 +18,7 @@ pv:
   capacity: 100G
   storageClassName: etcd-snapshot
   server: truenas.0.taranto.dev
-  path: /mnt/pool-0/backups/ocpa
+  path: /mnt/pool-0/backups/ocpb
 
 sync:
   sshSecret: ssh-key-pair
@@ -27,6 +27,6 @@ labelDomain: taranto.dev
 namespace: etcd-snapshot
 serviceAccount:
   use: true
-  name: etcd-snapshot
+#  name: etcd-snapshot
 
 image: staranto/etcd-snapshot:0.1.5
