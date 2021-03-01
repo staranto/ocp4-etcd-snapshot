@@ -14,12 +14,14 @@ data:
         --rsh 'ssh -l core -o "StrictHostKeyChecking=no"' \
         ${2}/ ${3}/
     {{- else }}
-      {{ range $i, $n := (lookup "v1" "Node" "" "").items }}
-        {{ $l := get $n.metadata.labels "etcd-snapshot.taranto.dev/role" }}
+      {{- $baseDomain := .Values.baseDomain -}}
+      {{- /* $dns := (lookup "config.openshift.io/v1" "DNS" "" "cluster") */ -}}
+      {{- range $i, $n := (lookup "v1" "Node" "" "").items }}
+        {{- $l := get $n.metadata.labels "etcd-snapshot.taranto.dev/role" }}
         {{- if eq $l "mirror" }}
           rsync --archive --delete --verbose --human-readable \
             --rsh 'ssh -l core -o "StrictHostKeyChecking=no"' \
-            ${2}/ {{ print $n.metadata.name }}:${3}/
+            ${2}/ {{ printf "%s.%s" $n.metadata.name $baseDomain }}:${3}/
         {{- end }}
       {{- end }}
     {{- end }}
