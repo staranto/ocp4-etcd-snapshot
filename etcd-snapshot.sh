@@ -1,15 +1,44 @@
 #!/bin/bash
 
-SNAPSHOT_HOST=${1}
-SNAPSHOT_DIR=${2:-/home/core/etcd-snapshots}
-SNAPSHOT_DAYS=${3:-0}
+SNAPSHOT_DIR=/home/core/etcd-snapshots
+SNAPSHOT_DAYS=0
 THIS_HOST=$(hostname)
 VALID_DIRS="/home/core /var/home/core /tmp"
 
+while [[ $# -gt 0 ]]; do
+    k="$1"
+    case $k in
+        -f|--force)
+            SNAPSHOT_FORCE="--force"
+            shift
+            ;;
+        -h|--host)
+            SNAPSHOT_HOST="$2"
+            shift
+            shift
+            ;;
+        -o|--output)
+            SNAPSHOT_DIR="$2"
+            shift
+            shift
+            ;;          
+        -p|--purge)
+            SNAPSHOT_DAYS="$2"
+            shift
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $0 $*"
+            exit 1
+    esac
+done
+
 echo "--- Runtime ---"
+echo "Command Line=$0 $*"
 echo "SNAPSHOT_HOST=${SNAPSHOT_HOST}"
 echo "SNAPSHOT_DIR=${SNAPSHOT_DIR}"
 echo "SNAPSHOT_DAYS=${SNAPSHOT_DAYS}"
+echo "SNAPSHOT_FORCE=${SNAPSHOT_FORCE}"
 echo "---------------"
 
 set -x
@@ -34,7 +63,7 @@ fi
 
 mkdir -p ${SNAPSHOT_DIR}
 
-/usr/local/bin/cluster-backup.sh ${SNAPSHOT_DIR}
+/usr/local/bin/cluster-backup.sh ${SNAPSHOT_FORCE} ${SNAPSHOT_DIR}
 
 chown -R core:core ${SNAPSHOT_DIR}
 
