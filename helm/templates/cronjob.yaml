@@ -5,7 +5,7 @@ kind: CronJob
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-    {{ .Values.labelDomain }}/app: {{ .Release.Name }}
+  {{ template "snapshot.labels" . }}
 spec:
   concurrencyPolicy: Forbid
   schedule: {{ .Values.schedule | quote }}
