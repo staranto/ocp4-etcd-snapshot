@@ -1,0 +1,34 @@
+debug:
+  active: false
+  timeout: 299
+
+# Node is in UTC, which is +5 from a real TZ.
+schedule: "30 13 * * *"
+
+# pv = /target-dir is PV-backed
+# sync = use snapshot.directory and then sync to 
+#    same dir on nodes with role=mirror label.
+mode: pv
+
+snapshot:
+  directory: "/var/home/core/etcd-snapshots"
+  purgeDays: 1
+
+pv:
+  name: etcd-snapshot
+  driver: intree
+  capacity: 100G
+  storageClassName: etcd-snapshot
+  server: truenas.0.taranto.dev
+  path: /mnt/pool-0/backups/ocpb
+
+sync:
+  sshSecret: ssh-key-pair
+
+baseDomain: 0.taranto.dev
+labelDomain: taranto.dev
+serviceAccount:
+  use: true
+#  name: etcd-snapshot
+
+image: staranto/etcd-snapshot:0.1.5

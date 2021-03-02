@@ -1,0 +1,8 @@
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: steve-taranto
+spec:
+  name: etcd-snapshot
+  connectionConfig:
+    url: https://staranto.github.io/ocp4-etcd-snapshot/helm

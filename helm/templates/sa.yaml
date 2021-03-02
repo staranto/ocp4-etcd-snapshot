@@ -1,0 +1,25 @@
+{{- if eq .Values.serviceAccount.use true }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Release.Name | quote }}
+  labels:
+  {{ template "snapshot.labels" . }}
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Release.Name }}-privileged
+  labels:
+  {{ template "snapshot.labels" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:privileged
+subjects:
+- kind: ServiceAccount
+  name: {{ .Release.Name | quote}}
+  namespace: {{ .Release.Namespace | quote }}
+{{- end }}

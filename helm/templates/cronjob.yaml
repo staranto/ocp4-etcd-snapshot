@@ -1,0 +1,125 @@
+{{/*  https://access.redhat.com/articles/4047481 */}}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name | quote }}
+  labels:
+  {{ template "snapshot.labels" . }}
+spec:
+  concurrencyPolicy: Forbid
+  schedule: {{ .Values.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            etcd-snapshot.{{ .Values.labelDomain }}/role: snapshot
+          tolerations:
+          - key: "node-role.kubernetes.io/master"
+            operator: "Exists"
+            effect: "NoSchedule"
+          restartPolicy: Never
+          {{- if eq .Values.serviceAccount.use true }}
+          serviceAccountName: {{ .Release.Name | quote }}
+          {{- end }}
+          terminationGracePeriodSeconds: 1
+          volumes:
+          - name: etcd-snapshot-sync-sh
+            configMap:
+              name: {{ .Release.Name }}-sync-sh
+              defaultMode: 0755
+          - name: host
+            hostPath:
+              path: /
+          - name: source-dir
+            hostPath:
+              path: {{ .Values.snapshot.directory }}
+          {{- if eq .Values.mode "sync" }}
+          - name: ssh-key
+            secret:
+              secretName: {{ .Values.sync.sshSecret | quote }}
+              defaultMode: 0400
+              items:
+              - key: private
+                path: id_rsa
+          {{- end }}
+          {{- if eq .Values.mode "pv" }}
+          - name: target-dir
+            persistentVolumeClaim: 
+              claimName: {{ .Release.Name | quote }}
+          {{- end }}
+
+          initContainers:
+          - name: snapshotter
+            image: {{ .Values.image }} 
+            imagePullPolicy: IfNotPresent
+            command:
+            {{- if .Values.debug.active }}
+              - "sleep"
+              - {{ .Values.debug.timeout | default 300 | quote }}
+            {{- else }}
+            - "chroot"
+            - "/host"
+            - "/usr/local/bin/etcd-snapshot.sh"
+            {{- if eq .Values.ocpversion "4.7" }}
+            - "--force"
+            {{- end }}
+            - "--host"
+            - "pod-mode"
+            - "--output"
+            - {{ .Values.snapshot.directory | quote }}
+            - "--purge"
+            - {{ .Values.snapshot.purgeDays | quote }}
+            {{- end }}
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsGroup: 0
+            volumeMounts:
+            - name: host
+              mountPath: /host
+
+          containers:
+          - name: syncer
+            image: {{ .Values.image | quote }} 
+            imagePullPolicy: IfNotPresent
+            command:
+            {{- if .Values.debug.active }}
+              - "sleep"
+              - {{ .Values.debug.timeout | default 300 | quote }}
+            {{- else }}
+              - "/etcd-snapshot-sync/etcd-snapshot-sync.sh"
+              - {{ .Values.mode | quote }}
+              - "/source-dir"
+            {{- if eq .Values.mode "pv" }}
+              - "/target-dir"
+            {{- else }}
+              - {{ .Values.snapshot.directory | quote }}
+            {{- end }}
+            {{- end }}
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              runAsGroup: 0
+            volumeMounts:
+            {{- if .Values.debug.active }}
+            - name: host
+              mountPath: /host
+            {{- else }}
+            - name: etcd-snapshot-sync-sh
+              mountPath: /etcd-snapshot-sync
+            - name: source-dir
+              mountPath: /source-dir
+              readOnly: false          
+            {{- if eq .Values.mode "sync" }}
+            - name: ssh-key
+              mountPath: /root/.ssh
+            {{- end }}
+            {{- if eq .Values.mode "pv" }}
+            - name: target-dir
+              mountPath: /target-dir
+              readOnly: false          
+            {{- end }}
+            {{- end }}
+...
