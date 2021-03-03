@@ -21,7 +21,7 @@ spec:
             Environment=HOST=master-0.ocpa
             Environment=TGT_DIR=/home/core/etcd-snapshots
             Environment=DAYS=3
-            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh ${HOST} ${TGT_DIR} ${DAYS}
+            ExecStart=/bin/bash /usr/local/bin/etcd-snapshot.sh --host ${HOST} --output ${TGT_DIR} --purge ${DAYS}
           enabled: false
         - name: etcd-snapshot.timer
           contents: |
@@ -29,6 +29,6 @@ spec:
             Description=Run etcd-snapshot.service daily
             
             [Timer]
-            OnCalendar=00:01:00 America/New_York
+            OnCalendar=00:06:00 America/New_York
           enabled: true
 ...
