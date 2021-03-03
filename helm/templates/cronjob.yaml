@@ -16,7 +16,7 @@ spec:
           nodeSelector:
             etcd-snapshot.{{ .Values.labelDomain }}/role: snapshot
           tolerations:
-          - key: "node-role.kubernetes.io/master"
+          - key: {{ .Values.tolerationLabelKey | quote }}
             operator: "Exists"
             effect: "NoSchedule"
           restartPolicy: Never

@@ -27,6 +27,7 @@ sync:
 
 baseDomain: 0.taranto.dev
 labelDomain: taranto.dev
+tolerationLabelKey: node-role.kubernetes.io/master
 serviceAccount:
   use: true
 #  name: etcd-snapshot
