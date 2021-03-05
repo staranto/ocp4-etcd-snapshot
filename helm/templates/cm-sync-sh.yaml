@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-sync-sh
   labels:
-  {{ template "snapshot.labels" . }}
+  {{- template "snapshot.labels" . }}
 data:
   etcd-snapshot-sync.sh: |+
     #! /usr/bin/env bash

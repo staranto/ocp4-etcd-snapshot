@@ -5,7 +5,7 @@ kind: CronJob
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-  {{ template "snapshot.labels" . }}
+  {{- template "snapshot.labels" . }}
 spec:
   concurrencyPolicy: Forbid
   schedule: {{ .Values.schedule | quote }}
@@ -62,7 +62,7 @@ spec:
             - "chroot"
             - "/host"
             - "/usr/local/bin/etcd-snapshot.sh"
-            {{- if eq .Values.ocpversion "4.7" }}
+            {{- if eq .Values.ocpVersion "4.7" }}
             - "--force"
             {{- end }}
             - "--host"

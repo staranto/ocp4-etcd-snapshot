@@ -20,7 +20,7 @@ kind: PersistentVolume
 metadata:
   name: {{ .Release.Name | quote }}
   labels:
-  {{ template "snapshot.labels" . }}
+  {{- template "snapshot.labels" . }}
 spec:
   capacity:
     storage: {{ .Values.pv.capacity }}
@@ -48,6 +48,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name | quote }}
+  labels:
+  {{- template "snapshot.labels" . }}
 spec:
   accessModes:
     - ReadWriteOnce
