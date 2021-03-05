@@ -33,3 +33,5 @@ serviceAccount:
 #  name: etcd-snapshot
 
 image: staranto/etcd-snapshot:0.1.5
+
+ocpVersion: "4.7"
