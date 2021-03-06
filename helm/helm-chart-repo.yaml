@@ -1,8 +1,8 @@
 apiVersion: helm.openshift.io/v1beta1
 kind: HelmChartRepository
 metadata:
-  name: sirius-red-hat
+  name: staranto
 spec:
   name: etcd-snapshot
   connectionConfig:
-    url: https://github.com/sirius-red-hat/ocp4-etcd-snapshot
+    url: https://staranto.github.io/ocp4-etcd-snapshot/helm
