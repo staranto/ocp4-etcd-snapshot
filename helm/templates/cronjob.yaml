@@ -57,7 +57,7 @@ spec:
             command:
             {{- if .Values.debug.active }}
               - "sleep"
-              - {{ .Values.debug.timeout | default 300 | quote }}
+              - {{ .Values.debug.timeout | default "30m" | quote }}
             {{- else }}
             - "chroot"
             - "/host"
