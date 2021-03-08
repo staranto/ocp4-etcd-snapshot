@@ -6,6 +6,7 @@ schedule: "30 13 * * *"
 #    same dir on nodes with role=mirror label.
 mode: pv
 
+# TODO: Make CSI independent as oppposed to being NFS-specific.
 pv:
   name: etcd-snapshot
   driver: intree
@@ -16,15 +17,15 @@ pv:
 
 sync:
   # The secret name pre-deployed to be used by rsync when syncing from the
-  # snapshot node to the mirror(s).  The private key is required to be
-  # the 'private' key in the secret.
+  # snapshot node to the mirror(s).  The private key is required to be the
+  # 'private' key in the secret.
   # TODO: Use the secret available as part of cluster install.
   sshSecret: ssh-key-pair
 
 # Used to build the FQDN for the mirror nodes to sync snapshots to.  It looks
-# like there is some inconsistency between 4.x releases as to how RHCOS
-# resolves host names.  We're using short names, so this will append the 
-# remainder of the FQDN.  
+# like there is some inconsistency between 4.x releases as to how RHCOS resolves
+# host names.  We're using short names, so this will append the remainder of the
+# FQDN.  
 # TODO: To be tested -- AWS.
 baseDomain: 0.taranto.dev
 
@@ -38,24 +39,23 @@ debug:
 image: staranto/etcd-snapshot:0.1.5
 
 labelDomain: taranto.dev
-# OCP 4.7 uses the hateful dirty checking in its cluster-backup.sh.  Set this 
-# value to "4.7" to include the --force option.  This is a workaround because 
-# it doesn't look like the privileged pod has access to the host network.  
-# So the oc command in cluster-backup.sh fails when trying to hit 
-# https://localhost:6443.
+# OCP 4.7 uses the hateful dirty checking in its cluster-backup.sh.  Set this
+# value to "4.7" to include the --force option.  This is a workaround because it
+# doesn't look like the privileged pod has access to the host network. So the oc
+# command in cluster-backup.sh fails when trying to hit https://localhost:6443.
 # TODO: Figure out how to run a privileged pod w/access to host network.
 ocpVersion: "4.6"
 
 serviceAccount:
-  # Keep this at true.  Results will be indeterminate until I figure out 
-  # exactly how I want to handle pre-existings SA's.
+  # Keep this at true.  Results will be indeterminate until I figure out exactly
+  # how I want to handle pre-existings SA's.
   use: true
 
 snapshot:
   # On-node directory where snapshot will be stored and synced to on mirrors. 
   # TODO: Validate and fail in the chart.
   directory: "/var/home/core/etcd-snapshots"
-  # Required number of days where old snapshots will age out and be 
+  # Required number of days where old snapshots will age out and be
   # automatically purged.  Use 0 to disable. 
   # TODO: Make this optional.  If missing, assume 0.
   purgeDays: 5
