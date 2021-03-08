@@ -25,9 +25,26 @@ spec:
         overwrite: true
       - path: /home/core/.ssh/id_rsa
         contents:
-          # TODO: Handle private key properly.  Get it from the OCP deployment location.
+          # Think about what you're doing here.  If your running etcd-snapshot
+          # in systemd mode and are spraying backup sets to mirror nodes, then
+          # you have to supply a private key to the nodes since we're using
+          # ssh-backed rsync to do the syncing.  Not the best idea, but it's
+          # what I have right now.  Be aware --
+          #   1. the nature of MachineConfigs are that they are applied to, in
+          #      this context, all master nodes.  The private key will be
+          #      deployed to all nodes even though it is actually only needed on
+          #      the node with the snapshot lable.
+          #   2. The encdoed private key needs to be in this document and is
+          #      likely to end up in source control unless you're really on the
+          #      ball.  
+          # The safer way to use etc-snapshot is in Privileged Pod Mode, though
+          # that's obviously got some problems.  At least you'll have some 
+          # control over governing it.
+
+          # TODO: Handle private key properly.  Get it from the OCP deployment 
+          # location.
           source: >-
-            data:text/plain;charset=utf-8;base64, # !! Insert encoded private key. 
+            data:text/plain;charset=utf-8;base64,<<Insert encoded private key.>>
         mode: 384
         user:
           name: core

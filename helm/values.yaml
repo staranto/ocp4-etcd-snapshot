@@ -4,7 +4,7 @@ schedule: "30 13 * * *"
 # pv = /target-dir is PV-backed
 # sync = use snapshot.directory and then sync to 
 #    same dir on nodes with role=mirror label.
-mode: pv
+mode: sync
 
 # TODO: Make CSI independent as oppposed to being NFS-specific.
 pv:
@@ -17,8 +17,8 @@ pv:
 
 sync:
   # The secret name pre-deployed to be used by rsync when syncing from the
-  # snapshot node to the mirror(s).  The private key is required to be the
-  # 'private' key in the secret.
+  # snapshot node to the mirror(s).  The encoded private key is required to be the
+  # 'private' attributre in the secret.
   # TODO: Use the secret available as part of cluster install.
   sshSecret: ssh-key-pair
 
@@ -59,4 +59,5 @@ snapshot:
   # automatically purged.  Use 0 to disable. 
   purgeDays: 5
 
+# Some distros use a different key to label their masters.
 tolerationLabelKey: node-role.kubernetes.io/master
