@@ -57,7 +57,6 @@ snapshot:
   directory: "/var/home/core/etcd-snapshots"
   # Required number of days where old snapshots will age out and be
   # automatically purged.  Use 0 to disable. 
-  # TODO: Make this optional.  If missing, assume 0.
   purgeDays: 5
 
 tolerationLabelKey: node-role.kubernetes.io/master

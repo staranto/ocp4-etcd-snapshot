@@ -70,7 +70,7 @@ spec:
             - "--output"
             - {{ .Values.snapshot.directory | quote }}
             - "--purge"
-            - {{ .Values.snapshot.purgeDays | quote }}
+            - {{ .Values.snapshot.purgeDays | default "0" | quote }}
             {{- end }}
             securityContext:
               privileged: true
