@@ -4,14 +4,18 @@ schedule: "30 13 * * *"
 # pv = /target-dir is PV-backed
 # sync = use snapshot.directory and then sync to 
 #    same dir on nodes with role=mirror label.
-mode: sync
+mode: pv
 
 # TODO: Make CSI independent as oppposed to being NFS-specific.
 pv:
-  name: etcd-snapshot
-  driver: intree
   capacity: 100G
-  storageClassName: etcd-snapshot
+
+  # Assume these objects already exist.  Mutually exclusive.
+  #storageClassName: etcd-snapshot-yyy
+  #name: etcd-snapshot-yyy
+
+  # Mutually exclusive with the above.
+  driver: intree
   server: truenas.0.taranto.dev
   path: /mnt/pool-0/backups/ocpb
 
