@@ -19,6 +19,7 @@ spec:
           - key: {{ .Values.tolerationLabelKey | quote }}
             operator: "Exists"
             effect: "NoSchedule"
+          hostNetwork: true
           restartPolicy: Never
           {{- if eq .Values.serviceAccount.use true }}
           serviceAccountName: {{ .Release.Name | quote }}
@@ -57,14 +58,11 @@ spec:
             command:
             {{- if .Values.debug.active }}
               - "sleep"
-              - {{ .Values.debug.timeout | default "30m" | quote }}
+              - "1"
             {{- else }}
             - "chroot"
             - "/host"
             - "/usr/local/bin/etcd-snapshot.sh"
-            {{- if eq .Values.ocpVersion "4.7" }}
-            - "--force"
-            {{- end }}
             - "--host"
             - "pod-mode"
             - "--output"

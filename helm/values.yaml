@@ -43,12 +43,6 @@ debug:
 image: staranto/etcd-snapshot:0.1.5
 
 labelDomain: taranto.dev
-# OCP 4.7 uses the hateful dirty checking in its cluster-backup.sh.  Set this
-# value to "4.7" to include the --force option.  This is a workaround because it
-# doesn't look like the privileged pod has access to the host network. So the oc
-# command in cluster-backup.sh fails when trying to hit https://localhost:6443.
-# TODO: Figure out how to run a privileged pod w/access to host network.
-ocpVersion: "4.6"
 
 serviceAccount:
   # Keep this at true.  Results will be indeterminate until I figure out exactly
