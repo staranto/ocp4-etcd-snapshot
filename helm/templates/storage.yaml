@@ -6,7 +6,9 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: {{ .Release.Name | quote }}
+# TODO: Deal with no provisioners.
 provisioner: nfs.csi.k8s.io
+# TODO: Not relevant to non-AWS.
 parameters:
   type: gp2
 reclaimPolicy: Retain
