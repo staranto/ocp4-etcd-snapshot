@@ -1,3 +1,4 @@
 trash/
 stale/
 etcd-snapshot-spray-keys-mc.yaml
+helm/sirius-bpic.yaml
