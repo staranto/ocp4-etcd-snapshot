@@ -17,7 +17,7 @@ pv:
   # Mutually exclusive with the above.
   driver: intree
   server: truenas.0.taranto.dev
-  path: /mnt/pool-0/backups/ocpb
+  path: /mnt/pool-0/backups/ocpa
 
 sync:
   # The secret name pre-deployed to be used by rsync when syncing from the
