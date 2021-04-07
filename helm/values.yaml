@@ -31,7 +31,7 @@ sync:
 # host names.  We're using short names, so this will append the remainder of the
 # FQDN.  
 # TODO: To be tested -- AWS.
-baseDomain: 0.taranto.dev
+baseDomain: .0.taranto.dev
 
 debug:
   # Put the nodes to sleep without actually running the snapshot or sync.

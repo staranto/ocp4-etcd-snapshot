@@ -14,14 +14,15 @@ data:
     {{- if eq .Values.mode "pv" }}
       rsync --archive --delete --verbose --human-readable ${2}/ ${3}/
     {{- else }}
-      {{- $baseDomain := .Values.baseDomain -}}
+      # TODO Deal w/empty baseDomain for clusters where node name is FQDN.
+      {{- $baseDomain := .Values.baseDomain | default "" -}}
       {{- /* $dns := (lookup "config.openshift.io/v1" "DNS" "" "cluster") */ -}}
       {{- range $i, $n := (lookup "v1" "Node" "" "").items }}
         {{- $l := get $n.metadata.labels "etcd-snapshot.taranto.dev/role" }}
         {{- if eq $l "mirror" }}
           rsync --archive --delete --verbose --human-readable \
             --rsh 'ssh -l core -o "StrictHostKeyChecking=no"' \
-            ${2}/ {{ printf "%s.%s" $n.metadata.name $baseDomain }}:${3}/
+            ${2}/ {{ printf "%s%s" $n.metadata.name $baseDomain }}:${3}/
         {{- end }}
       {{- end }}
     {{- end }}

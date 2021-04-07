@@ -3,8 +3,8 @@ name: etcd-snapshot
 description: Kubernetes native snapshotting of etcd datastore.
 
 type: application
-version: 1.0.3
-appVersion: "1.0.3"
+version: 1.0.4
+appVersion: "1.0.4"
 icon: https://avatars.githubusercontent.com/u/198525?s=60&v=4
 
 # TODO: S3 support.
