@@ -1,0 +1,61 @@
+# Node is in UTC, which is +5/+4 from EST/EDT.
+schedule: "1 20 * * *"
+
+# pv = /target-dir is PV-backed
+# sync = use snapshot.directory and then sync to 
+#    same dir on nodes with role=mirror label.
+mode: pv
+
+# TODO: Make CSI independent as oppposed to being NFS-specific.
+pv:
+  capacity: 100G
+
+  # Assume these objects already exist.  Mutually exclusive.
+  #storageClassName: etcd-snapshot-yyy
+  #name: etcd-snapshot-yyy
+
+  # Mutually exclusive with the above.
+  driver: intree
+  server: truenas.0.taranto.dev
+  path: /mnt/pool-0/backups/ocpa
+
+sync:
+  # The secret name pre-deployed to be used by rsync when syncing from the
+  # snapshot node to the mirror(s).  The encoded private key is required to be the
+  # 'private' attributre in the secret.
+  # TODO: Use the secret available as part of cluster install.
+  sshSecret: ssh-key-pair
+
+# Used to build the FQDN for the mirror nodes to sync snapshots to.  It looks
+# like there is some inconsistency between 4.x releases as to how RHCOS resolves
+# host names.  We're using short names, so this will append the remainder of the
+# FQDN.  
+# TODO: To be tested -- AWS.
+baseDomain: .0.taranto.dev
+
+debug:
+  # Put the nodes to sleep without actually running the snapshot or sync.
+  active: false
+  # How long they'll sleep for.  Note you can use # of seconds or use a m/h/d
+  # qualifier.  infinity is also a poor option.
+  timeout: 30m
+
+image: staranto/etcd-snapshot:0.1.5
+
+labelDomain: ocpa.0.taranto.dev
+
+serviceAccount:
+  # Keep this at true.  Results will be indeterminate until I figure out exactly
+  # how I want to handle pre-existings SA's.
+  use: true
+
+snapshot:
+  # On-node directory where snapshot will be stored and synced to on mirrors. 
+  # TODO: Validate and fail in the chart.
+  directory: "/var/home/core/etcd-snapshots"
+  # Required number of days where old snapshots will age out and be
+  # automatically purged.  Use 0 to disable. 
+  purgeDays: 5
+
+# Some distros use a different key to label their masters.
+tolerationLabelKey: node-role.kubernetes.io/master
