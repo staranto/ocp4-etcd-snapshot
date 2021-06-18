@@ -79,3 +79,7 @@ ls -l ${SNAPSHOT_DIR}
 
 echo "--- Purging stale snapshots ---"
 find ${SNAPSHOT_DIR} -type f -mtime ${SNAPSHOT_DAYS} -print -delete
+
+echo "--- Post-purge state ---"
+ls -l ${SNAPSHOT_DIR}
+
